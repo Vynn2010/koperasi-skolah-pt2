@@ -131,7 +131,7 @@ $units = ['Pcs','Pack','Bottle'];
 
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Simpan</button>
-                        <a href="index.php" class="btn btn-outline"></a>
+                        <a href="index.php" class="btn btn-outline">Batal</a>
                     </div>
                 </form>
             </div>
