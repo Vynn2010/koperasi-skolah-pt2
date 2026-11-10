@@ -27,7 +27,7 @@ $products = $pdo->query("SELECT * FROM products ORDER BY product_id DESC")->fetc
             <?php require_once __DIR__ . "/../../components/admin/topbar.php" ?>
 
             <div class="app-content">
-
+                <h1>Data Produk</h1>
                 <?php if ($flash): ?>
                     <div class="alert alert-<?= htmlspecialchars($flash['type']) ?>">
                         <?= htmlspecialchars($flash['message']) ?>

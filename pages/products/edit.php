@@ -46,7 +46,7 @@ $units = ['Pcs', 'Pack', 'Bottle'];
             <?php require_once __DIR__ . "/../../components/admin/topbar.php" ?>
 
             <div class="app-content">
-
+                <h1>Edit Produk</h1>
                 <?php if (isset($errors['_general'])): ?>
                     <div class="alert alert-error"><?= htmlspecialchars($errors['_general']) ?></div>
                 <?php endif; ?>
