@@ -56,3 +56,6 @@ input[type=text], input[type=email], input[type=tel], input[type=number], input[
 
 .auth-box { max-width: 380px; margin: 60px auto; background: #fff; border: 1px solid #ccc; padding: 24px; }
 .auth-box h2 { margin-top: 0; }
+
+.error-box { text-align: center; }
+.error-box h1 { font-size: 64px; margin: 0; color: #dc2626; }
