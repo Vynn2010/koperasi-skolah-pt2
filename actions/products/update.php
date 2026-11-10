@@ -55,6 +55,12 @@ if ($category === '') {
     $errors['category'] = "Kategori tidak valid.";
 }
 
+if ($unit === '') {
+    $errors['unit'] = "Satuan wajib dipilih.";
+} elseif (!in_array($unit, $units, true)) {
+    $errors['unit'] = "Satuan tidak valid.";
+}
+
 if ($price === '') {
     $errors['price'] = "Harga wajib diiisi.";
 } elseif (!is_numeric($price)) {
@@ -76,8 +82,8 @@ if ($stock === '') {
 if ($entry_date === '') {
     $errors['entry_date'] = "Tanggal masuk wajib diisi.";
 } else {
-    $id = DateTime::createFromFormat('Y-m-d', $entry_date);
-    if (!$id || $id->format('Y-m-d') !== $entry_date) {
+    $d = DateTime::createFromFormat('Y-m-d', $entry_date);
+    if (!$d || $d->format('Y-m-d') !== $entry_date) {
         $errors['entry_date'] = "Tanggal masuk tidak valid.";
     }
 }

@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$categories = ['Food','Drink','Stationary','Uniform'];
+$categories = ['Food','Drink','Stationery','Uniform'];
 $units = ['Pcs','Pack','Bottle'];
 
 $product_code = trim($_POST['product_code'] ?? '');
@@ -54,7 +54,7 @@ if ($unit === ''){
 if ($price === ''){
     $errors['price'] = "Harga wajib diisi.";
 } elseif (!is_numeric($price)) {
-    $errors[$price] = "Harga harus berupa angka.";
+    $errors['price'] = "Harga harus berupa angka.";
 } elseif ((float)$price < 0) {
     $errors['price'] = "Harga tidak boleh negatif.";
 } elseif ((float)$price > 99999999.99) {
@@ -117,7 +117,7 @@ try {
     exit;
 }
 
-$_SESSION['flash'] = ['type' => 'succes','message' => "Produk berhasil ditambahkan."];
+$_SESSION['flash'] = ['type' => 'success','message' => "Produk berhasil ditambahkan."];
 header("Location: ../../pages/products/index.php");
 exit;
 ?>

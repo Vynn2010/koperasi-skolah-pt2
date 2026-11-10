@@ -13,8 +13,8 @@ try {
     $pdo->beginTransaction();
 
     $stmt = $pdo->prepare("SELECT product_id FROM products WHERE product_id = ? FOR UPDATE");
-    $stmt->execute(['id']);
-    if ($id <= 0 || $stmt->fetchColumn()){
+    $stmt->execute([$id]);
+    if ($id <= 0 || !$stmt->fetchColumn()) {
         throw new RuntimeException("Data tidak ditemukan.");
     }
 
