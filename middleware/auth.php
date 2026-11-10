@@ -1,7 +1,7 @@
 <?php
-const LOGIN_URL = "../pages/auth/login.php";
-const PRODUCT_INDEX_URL = "../pages/products/index.php";
-const FORBIDDEN_URL = "../pages/errors/403.php";
+const LOGIN_URL = "../../pages/auth/login.php";
+const PRODUCT_INDEX_URL = "../../pages/products/index.php";
+const FORBIDDEN_URL = "../../pages/errors/403.php";
 
 function sessionStart()
 {
@@ -13,7 +13,7 @@ function sessionStart()
 function requireLogin()
 {
     session_start();
-    if(!isset($_SESSION['users'])) {
+    if(!isset($_SESSION['user'])) {
         $_SESSION['flash'] = ['type' => 'error','message' => "Silahkan login terlebih dahulu."];
         header("Location: " . LOGIN_URL);
         exit;

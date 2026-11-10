@@ -11,7 +11,7 @@ $old = ['username' => '', 'email' => ''];
 $errors= [];
 if(isset($_SESSION['form'])) {
     $old = array_merge($old, $_SESSION['form']['input']);
-    $errors = $_SESSION['fomr']['errors'];
+    $errors = $_SESSION['form']['errors'];
     unset($_SESSION['form']);
 }
 ?>

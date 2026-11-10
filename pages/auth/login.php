@@ -1,7 +1,4 @@
 <?php
-require_once __DIR__ . "/../../middleware/auth.php";
-redirectIfLoggedIn();
-
 if(isset($_SESSION['user'])) {
     header("Location: ../products/index.php");
     exit;
