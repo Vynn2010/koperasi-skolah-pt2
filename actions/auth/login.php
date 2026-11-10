@@ -22,6 +22,7 @@ $user = $stmt->fetch();
 
 if ($user && password_verify($password, $user['password'])) {
     session_regenerate_id(true);
+    unset($_SESSION['flash']);
     $_SESSION['user'] =['id' => $user['user_id'], 'username' => $user['username']];
     header("Location: ../../pages/products/index.php");
     exit;
