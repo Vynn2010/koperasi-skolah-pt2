@@ -75,13 +75,27 @@ if (!empty($errors)) {
 }
 
 try {
+    $pdo->beginTransaction();
+
     $stmt = $pdo->prepare(
-        "UPDATE employees SET number = ?, full_name = ?, gender = ?,
-         birth_date = ?, position = ?, salary = ? WHERE id = ?"
+        "UPDATE employees SET employee_number = ?, full_name = ?, gender = ?,
+                birth_date = ?, position = ?, salary = ?
+          WHERE employee_id = ?"
     );
     $stmt->execute([$number, $full_name, $gender, $birth_date, $position, $salary, $id]);
-} catch (Throwable $errors) {
-    $_SESSION['form'] = ['input' => $_POST, 'errors' => ['_general' => "Gagal mengubah data."]];
+
+    $pdo->commit();
+} catch (Throwable $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+
+    if ($e instanceof PDOException && ($e->errorInfo[1] ?? 0) == 1062) {
+        $msg = ['employee_number' => "Nomor pegawai sudah digunakan."];
+    } else {
+        $msg = ['_general' => "Gagal mengubah data. Perubahan dibatalkan (rollback)."];
+    }
+    $_SESSION['form'] = ['input' => $_POST, 'errors' => $msg];
     header("Location: ../../pages/employees/edit.php?id=" . $id);
     exit;
 }

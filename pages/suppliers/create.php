@@ -3,12 +3,26 @@ require_once __DIR__ . "/../../middleware/auth.php";
 requireLogin();
 require_once __DIR__ . "/../../config/database.php";
 
-$form = $_SESSION['form'] ?? [];
-unset($_SESSION['form']);
-$old = $form['input'] ?? [];
-$errors = $form['errors'] ?? [];
+$type_list = ['Food','Drink','Stationery','Uniform'];
 
-$base = "../../";
+$old = [
+    'supplier_name'    => '',
+    'email'            => '',
+    'phone'            => '',
+    'address'          => '',
+    'product_types'    => [],
+    'partnership_date' => date('Y-m-d')
+];
+$errors = [];
+
+if (isset($_SESSION['form'])) {
+    $old = array_merge($old, $_SESSION['form']['input']);
+    $old['product_types'] = is_array($_SESSION['form']['input']['product_types'] ?? null)
+        ? $_SESSION['form']['input']['product_types'] : [];
+    $errors = $_SESSION['form']['errors'];
+    unset($_SESSION['form']);
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -67,10 +81,13 @@ $base = "../../";
 
                     <div class="form-group">
                         <label>Jenis Produk</label>
-                        <input type="text" name="product_types" maxlength="100"
-                            value="<?= htmlspecialchars($old['product_types'] ?? '') ?>">
-                        <?php if (isset($errors['product_types'])): ?>
-                            <div class="field-error"><?= htmlspecialchars($errors['product_types']) ?></div><?php endif; ?>
+                        <?php foreach ($type_list as $t): ?>
+                            <label>
+                                <input type="checkbox" name="product_types[]" value="<?= $t ?>"
+                                        <?= in_array($t, $old['product_types'], true) ? 'checked' : '' ?>>
+                                <?= $t ?>
+                            </label>
+                        <?php endforeach; ?>
                     </div>
 
                     <div class="form-group">

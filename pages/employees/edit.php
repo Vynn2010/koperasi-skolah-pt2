@@ -20,7 +20,6 @@ unset($_SESSION['form']);
 $old = $form['input'] ?? $employee;
 $errors = $form['errors'] ?? [];
 
-$base = "../../";
 ?>
 <!DOCTYPE html>
 <html lang="id">

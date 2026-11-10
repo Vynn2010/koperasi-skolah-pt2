@@ -73,6 +73,8 @@ if (!empty($errors)) {
 }
 
 try {
+    $pdo->beginTransaction();
+    
     $stmt = $pdo->prepare("SELECT id FROM suppliers WHERE id = ? FOR UPDATE");
     $stmt->execute([$id]);
     if (!$stmt->fetchColumn()) {
@@ -87,6 +89,8 @@ try {
         $name, $email === '' ? null : $email, $phone, $address,
         $product_types, $partnership_date, $id
     ]);
+
+    $pdo->commit();
 } catch (Throwable $errors) {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();

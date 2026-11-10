@@ -9,7 +9,6 @@ unset($_SESSION['flash']);
 $employees = $pdo->query("SELECT * FROM employees ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
 $genderLabel = ['M' => 'Laki-laki', 'F' => 'Perempuan'];
 
-$base = "../../";
 ?>
 <!DOCTYPE html>
 <html lang="id">

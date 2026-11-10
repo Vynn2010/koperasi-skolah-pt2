@@ -8,7 +8,6 @@ unset($_SESSION['form']);
 $old = $form['input'] ?? [];
 $errors = $form['errors'] ?? [];
 
-$base = "../../";
 ?>
 <!DOCTYPE html>
 <html lang="id">

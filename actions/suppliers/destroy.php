@@ -11,15 +11,20 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $id = (int)($_POST['id'] ?? 0);
 
 try {
+    $pdo->beginTransaction();
+
     $stmt = $pdo->prepare("DELETE FROM suppliers WHERE id = ?");
     $stmt->execute([$id]);
 
     if ($stmt->rowCount() === 0) {
-        $_SESSION['flash'] = ['type' => 'error', 'message' => "Data supplier tidak ditemukan."];
-    } else {
-        $_SESSION['flash'] = ['type' => 'success', 'message' => "Supplier berhasil dihapus."];
-    }
+        throw new RuntimeException("Data tidak ditemukan.");
+    } 
+    $pdo->commit();
+    $_SESSION['flash'] = ['type' => 'success', 'message' => "Supplier berhasil dihapus."];
 } catch (Throwable $errors) {
+    if ($pdo -> inTransaction()){
+        $pdo->rollBack();
+    }
     $_SESSION['flash'] = ['type' => 'error', 'message' => "Supplier tidak dapat dihapus karena masih digunakan atau terjadi kesalahan."];
 }
 

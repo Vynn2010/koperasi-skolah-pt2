@@ -65,13 +65,26 @@ if (!empty($errors)) {
 }
 
 try {
+    $pdo->beginTransaction();
+
     $stmt = $pdo->prepare(
         "INSERT INTO employees (number, full_name, gender, birth_date, position, salary)
          VALUES (?, ?, ?, ?, ?, ?)"
     );
     $stmt->execute([$number, $full_name, $gender, $birth_date, $position, $salary]);
-} catch (Throwable $errors) {
-    $_SESSION['form'] = ['input' => $_POST, 'errors' => ['_general' => "Gagal menyimpan data."]];
+
+    $pdo->commit();
+} catch (Throwable $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+
+    if ($e instanceof PDOException && ($e->errorInfo[1] ?? 0) == 1062) {
+        $msg = ['employee_number' => "Nomor pegawai sudah digunakan."];
+    } else {
+        $msg = ['_general' => "Gagal menyimpan data. Perubahan dibatalkan (rollback)."];
+    }
+    $_SESSION['form'] = ['input' => $_POST, 'errors' => $msg];
     header("Location: ../../pages/employees/create.php");
     exit;
 }

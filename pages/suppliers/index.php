@@ -8,7 +8,6 @@ unset($_SESSION['flash']);
 
 $suppliers = $pdo->query("SELECT * FROM suppliers ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
 
-$base = "../../";
 ?>
 <!DOCTYPE html>
 <html lang="id">
