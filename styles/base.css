@@ -1,0 +1,55 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Arial, sans-serif; background: #f4f6f9; color: #222; }
+a { color: #1d4ed8; }
+
+/* Layout admin */
+.app-shell { display: flex; min-height: 100vh; }
+.sidebar { width: 200px; background: #1e293b; padding: 16px; }
+.sidebar a { display: block; color: #fff; text-decoration: none; padding: 8px 0; }
+.sidebar .brand { font-weight: bold; font-size: 18px; margin-bottom: 12px; }
+.app-main { flex: 1; }
+.topbar { background: #fff; padding: 14px 20px; border-bottom: 1px solid #ccc; }
+.topbar h1 { margin: 0; font-size: 18px; }
+.app-content { padding: 20px; }
+
+/* Landing */
+.navbar { display: flex; justify-content: space-between; padding: 14px 20px; background: #fff; border-bottom: 1px solid #ccc; }
+.navbar a { margin-left: 14px; text-decoration: none; color: #222; }
+.navbar .brand { font-weight: bold; margin: 0; }
+.hero { text-align: center; padding: 60px 20px 30px; }
+.features { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; padding: 20px; }
+.card { display: block; width: 220px; background: #fff; border: 1px solid #ccc; border-radius: 6px; padding: 16px; text-decoration: none; color: #222; }
+.card strong { display: block; margin-bottom: 4px; }
+.site-footer { text-align: center; padding: 20px; color: #666; font-size: 13px; }
+
+/* Tombol */
+.btn { display: inline-block; padding: 8px 14px; border: 1px solid #ccc; border-radius: 4px; background: #fff; color: #222; text-decoration: none; cursor: pointer; font-size: 14px; }
+.btn-primary { background: #1d4ed8; border-color: #1d4ed8; color: #fff; }
+.btn-danger { background: #dc2626; border-color: #dc2626; color: #fff; }
+.btn-sm { padding: 4px 9px; font-size: 13px; }
+.toolbar { margin-bottom: 14px; }
+
+/* Tabel */
+.table-wrap { overflow-x: auto; background: #fff; border: 1px solid #ccc; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 8px 10px; border-bottom: 1px solid #ddd; text-align: left; }
+th { background: #f0f0f0; }
+td.num { text-align: right; }
+td.empty { text-align: center; color: #666; }
+
+/* Form */
+.form { max-width: 560px; background: #fff; border: 1px solid #ccc; padding: 20px; }
+.form-section-title { font-weight: bold; margin-bottom: 12px; }
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; margin-bottom: 4px; }
+.form-group label input[type=radio], .form-group label input[type=checkbox] { margin-right: 4px; }
+input[type=text], input[type=email], input[type=tel], input[type=number], input[type=date], select, textarea {
+    width: 100%; padding: 8px; border: 1px solid #aaa; border-radius: 4px; font: inherit;
+}
+.form-actions { display: flex; gap: 8px; }
+
+/* Pesan */
+.field-error { color: #dc2626; font-size: 13px; margin-top: 3px; }
+.alert { padding: 10px 14px; margin-bottom: 14px; border-radius: 4px; }
+.alert-success { background: #dcfce7; color: #166534; }
+.alert-error { background: #fee2e2; color: #991b1b; }
