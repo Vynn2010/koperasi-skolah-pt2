@@ -78,9 +78,9 @@ try {
     $pdo->beginTransaction();
 
     $stmt = $pdo->prepare(
-        "UPDATE employees SET employee_number = ?, full_name = ?, gender = ?,
-                birth_date = ?, position = ?, salary = ?
-          WHERE employee_id = ?"
+    "UPDATE employees SET number = ?, full_name = ?, gender = ?,
+            birth_date = ?, position = ?, salary = ?
+      WHERE id = ?"
     );
     $stmt->execute([$number, $full_name, $gender, $birth_date, $position, $salary, $id]);
 
@@ -91,7 +91,7 @@ try {
     }
 
     if ($e instanceof PDOException && ($e->errorInfo[1] ?? 0) == 1062) {
-        $msg = ['employee_number' => "Nomor pegawai sudah digunakan."];
+        $msg = ['number' => "Nomor pegawai sudah digunakan."];
     } else {
         $msg = ['_general' => "Gagal mengubah data. Perubahan dibatalkan (rollback)."];
     }

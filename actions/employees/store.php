@@ -80,7 +80,7 @@ try {
     }
 
     if ($e instanceof PDOException && ($e->errorInfo[1] ?? 0) == 1062) {
-        $msg = ['employee_number' => "Nomor pegawai sudah digunakan."];
+        $msg = ['number' => "Nomor pegawai sudah digunakan."];
     } else {
         $msg = ['_general' => "Gagal menyimpan data. Perubahan dibatalkan (rollback)."];
     }

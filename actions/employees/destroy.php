@@ -13,7 +13,7 @@ $id = (int)($_POST['id'] ?? 0);
 try {
     $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare("DELETE FROM employees WHERE employee_id = ?");
+    $stmt = $pdo->prepare("DELETE FROM employees WHERE id = ?");
     $stmt->execute([$id]);
 
     if ($stmt->rowCount() === 0) {
