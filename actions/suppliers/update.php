@@ -8,15 +8,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$name             = trim($_POST['name'] ?? '');
-$email            = trim($_POST['email'] ?? '');
-$phone            = trim($_POST['phone'] ?? '');
-$address          = trim($_POST['address'] ?? '');
-$product_types    = trim($_POST['product_types'] ?? '');
-$partnership_date = trim($_POST['partnership_date'] ?? '');
-
-$errors = [];
-
 $id = (int)($_POST['id'] ?? 0);
 
 $stmt = $pdo->prepare("SELECT 1 FROM suppliers WHERE id = ?");
@@ -27,18 +18,30 @@ if ($id <= 0 || !$stmt->fetchColumn()) {
     exit;
 }
 
-if ($name === '') {
-    $errors['name'] = "Nama supplier wajib diisi.";
-} elseif (strlen($name) > 100) {
-    $errors['name'] = "Nama supplier maksimal 100 karakter.";
+$type_list = ['Food', 'Drink', 'Stationery', 'Uniform'];
+
+$supplier_name    = trim($_POST['supplier_name'] ?? '');
+$email            = trim($_POST['email'] ?? '');
+$phone            = trim($_POST['phone'] ?? '');
+$address          = trim($_POST['address'] ?? '');
+$partnership_date = trim($_POST['partnership_date'] ?? '');
+$types            = $_POST['product_types'] ?? [];
+if (!is_array($types)) {
+    $types = [];
 }
 
-if ($email !== '') {
-    if (strlen($email) > 100) {
-        $errors['email'] = "Email maksimal 100 karakter.";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = "Format email tidak valid.";
-    }
+$errors = [];
+
+if ($supplier_name === '') {
+    $errors['supplier_name'] = "Nama supplier wajib diisi.";
+} elseif (strlen($supplier_name) > 100) {
+    $errors['supplier_name'] = "Nama supplier maksimal 100 karakter.";
+}
+
+if ($email === '') {
+    $errors['email'] = "Email wajib diisi.";
+} elseif (strlen($email) > 100 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $errors['email'] = "Format email tidak valid.";
 }
 
 if ($phone === '') {
@@ -51,10 +54,16 @@ if ($address === '') {
     $errors['address'] = "Alamat wajib diisi.";
 }
 
-if ($product_types === '') {
-    $errors['product_types'] = "Jenis produk wajib diisi.";
-} elseif (strlen($product_types) > 100) {
-    $errors['product_types'] = "Jenis produk maksimal 100 karakter.";
+
+if (count($types) === 0) {
+    $errors['product_types'] = "Pilih minimal satu jenis produk.";
+} else {
+    foreach ($types as $t) {
+        if (!is_string($t) || !in_array($t, $type_list, true)) {
+            $errors['product_types'] = "Jenis produk tidak valid.";
+            break;
+        }
+    }
 }
 
 if ($partnership_date === '') {
@@ -72,9 +81,12 @@ if (!empty($errors)) {
     exit;
 }
 
+$types = array_values(array_intersect($type_list, $types));
+$product_types = json_encode($types);
+
 try {
     $pdo->beginTransaction();
-    
+
     $stmt = $pdo->prepare("SELECT id FROM suppliers WHERE id = ? FOR UPDATE");
     $stmt->execute([$id]);
     if (!$stmt->fetchColumn()) {
@@ -83,26 +95,21 @@ try {
 
     $stmt = $pdo->prepare(
         "UPDATE suppliers SET name = ?, email = ?, phone = ?, address = ?,
-        product_types = ?, partnership_date = ? WHERE id = ?"
+                product_types = ?, partnership_date = ?
+        WHERE id = ?"
     );
-    $stmt->execute([
-        $name, $email === '' ? null : $email, $phone, $address,
-        $product_types, $partnership_date, $id
-    ]);
+    $stmt->execute([$supplier_name, $email, $phone, $address, $product_types, $partnership_date, $id]);
 
     $pdo->commit();
-} catch (Throwable $errors) {
+} catch (Throwable $e) {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
-
-    $msg = ['_general' => "Gagal mengubah data. Perubahan dibatalkan (rollback)."];
-    $_SESSION['form'] = ['input' => $_POST, 'errors' => $msg];
-    header("Location: ../../pages/suppliers/edit.php?id=$id");
+    $_SESSION['form'] = ['input' => $_POST, 'errors' => ['_general' => "Gagal mengubah data. Perubahan dibatalkan (rollback)."]];
+    header("Location: ../../pages/suppliers/edit.php?id=" . $id);
     exit;
 }
 
 $_SESSION['flash'] = ['type' => 'success', 'message' => "Supplier berhasil diubah."];
 header("Location: ../../pages/suppliers/index.php");
 exit;
-?>

@@ -5,7 +5,7 @@ require_once __DIR__ . "/../../config/database.php";
 
 $id = (int) ($_GET['id'] ?? 0);
 
-$stmt = $pdo->prepare("SELECT * FROM suppliers WHERE supplier_id = ?");
+$stmt = $pdo->prepare("SELECT * FROM suppliers WHERE id = ?");
 $stmt->execute([$id]);
 $supplier = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -17,10 +17,13 @@ if ($id <= 0 || !$supplier) {
 
 $type_list = ['Food', 'Drink', 'Stationery', 'Uniform'];
 
+// data lama dari database
 $old = $supplier;
-$old['product_types'] = json_decode($supplier['product_types'], true) ?: [];
+$old['supplier_name'] = $supplier['name'];   // kolom DB "name" → kunci form "supplier_name"
+$old['product_types'] = json_decode($supplier['product_types'], true) ?: [];   // JSON → array
 $errors = [];
 
+// jika baru gagal validasi, tampilkan input terakhir + error
 if (isset($_SESSION['form'])) {
     $old = array_merge($old, $_SESSION['form']['input']);
     $old['product_types'] = is_array($_SESSION['form']['input']['product_types'] ?? null)
@@ -119,3 +122,10 @@ if (isset($_SESSION['form'])) {
                         <a href="index.php" class="btn">Batal</a>
                     </div>
                 </form>
+            </div>
+        </main>
+    </div>
+    <?php require __DIR__ . "/../../components/landing/footer.php"; ?>
+</body>
+
+</html>

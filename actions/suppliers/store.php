@@ -8,12 +8,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$name             = trim($_POST['name'] ?? '');
+$type_list = ['Food', 'Drink', 'Stationery', 'Uniform'];
+
+$name    = trim($_POST['name'] ?? '');
 $email            = trim($_POST['email'] ?? '');
 $phone            = trim($_POST['phone'] ?? '');
 $address          = trim($_POST['address'] ?? '');
-$product_types    = trim($_POST['product_types'] ?? '');
 $partnership_date = trim($_POST['partnership_date'] ?? '');
+$types            = $_POST['product_types'] ?? [];
+if (!is_array($types)) {
+    $types = [];
+}
 
 $errors = [];
 
@@ -23,12 +28,10 @@ if ($name === '') {
     $errors['name'] = "Nama supplier maksimal 100 karakter.";
 }
 
-if ($email !== '') {
-    if (strlen($email) > 100) {
-        $errors['email'] = "Email maksimal 100 karakter.";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = "Format email tidak valid.";
-    }
+if ($email === '') {
+    $errors['email'] = "Email wajib diisi.";
+} elseif (strlen($email) > 100 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $errors['email'] = "Format email tidak valid.";
 }
 
 if ($phone === '') {
@@ -41,10 +44,15 @@ if ($address === '') {
     $errors['address'] = "Alamat wajib diisi.";
 }
 
-if ($product_types === '') {
-    $errors['product_types'] = "Jenis produk wajib diisi.";
-} elseif (strlen($product_types) > 100) {
-    $errors['product_types'] = "Jenis produk maksimal 100 karakter.";
+if (count($types) === 0) {
+    $errors['product_types'] = "Pilih minimal satu jenis produk.";
+} else {
+    foreach ($types as $t) {
+        if (!is_string($t) || !in_array($t, $type_list, true)) {
+            $errors['product_types'] = "Jenis produk tidak valid.";
+            break;
+        }
+    }
 }
 
 if ($partnership_date === '') {
@@ -62,26 +70,25 @@ if (!empty($errors)) {
     exit;
 }
 
+// array → JSON, contoh: ["Food","Drink"]
+$types = array_values(array_intersect($type_list, $types));
+$product_types = json_encode($types);
+
 try {
     $pdo->beginTransaction();
 
     $stmt = $pdo->prepare(
-        "INSERT INTO suppliers
-            (name, email, phone, address, product_types, partnership_date)
+        "INSERT INTO suppliers (name, email, phone, address, product_types, partnership_date)
          VALUES (?, ?, ?, ?, ?, ?)"
     );
-    $stmt->execute([
-        $name, $email === '' ? null : $email, $phone, $address, $product_types, $partnership_date
-    ]);
+    $stmt->execute([$name, $email, $phone, $address, $product_types, $partnership_date]);
 
     $pdo->commit();
-} catch (Throwable $errors) {
+} catch (Throwable $e) {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
-
-    $msg = ['_general' => "Gagal menyimpan data. Perubahan dibatalkan (rollback)."];
-    $_SESSION['form'] = ['input' => $_POST, 'errors' => $msg];
+    $_SESSION['form'] = ['input' => $_POST, 'errors' => ['_general' => "Gagal menyimpan data. Perubahan dibatalkan (rollback)."]];
     header("Location: ../../pages/suppliers/create.php");
     exit;
 }
@@ -89,4 +96,3 @@ try {
 $_SESSION['flash'] = ['type' => 'success', 'message' => "Supplier berhasil ditambahkan."];
 header("Location: ../../pages/suppliers/index.php");
 exit;
-?>

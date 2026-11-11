@@ -6,7 +6,7 @@ require_once __DIR__ . "/../../config/database.php";
 $type_list = ['Food','Drink','Stationery','Uniform'];
 
 $old = [
-    'supplier_name'    => '',
+    'name'    => '',
     'email'            => '',
     'phone'            => '',
     'address'          => '',
