@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../../repositories/employees_repository.php";
 require_once __DIR__ . "/../../middleware/auth.php";
 requireLogin();
 require_once __DIR__ . "/../../config/database.php";
@@ -21,13 +22,10 @@ if ($number === '') {
     $errors['number'] = "Nomor pegawai wajib diisi.";
 } elseif (strlen($number) > 10) {
     $errors['number'] = "Nomor pegawai maksimal 10 karakter.";
-} else {
-    $stmt = $pdo->prepare("SELECT 1 FROM employees WHERE number = ?");
-    $stmt->execute([$number]);
-    if ($stmt->fetchColumn()) {
-        $errors['number'] = "Nomor pegawai sudah digunakan.";
-    }
+} elseif (employeeNumberExists($number)) {
+  $errors['number'] = "Nomor pegawai sudah digunakan.";
 }
+
 
 if ($full_name === '') {
     $errors['full_name'] = "Nama lengkap wajib diisi.";
@@ -67,11 +65,14 @@ if (!empty($errors)) {
 try {
     $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare(
-        "INSERT INTO employees (number, full_name, gender, birth_date, position, salary)
-         VALUES (?, ?, ?, ?, ?, ?)"
-    );
-    $stmt->execute([$number, $full_name, $gender, $birth_date, $position, $salary]);
+    insertEmployee([
+        'number'     => $number,
+        'full_name'  => $full_name,
+        'gender'     => $gender,
+        'birth_date' => $birth_date,
+        'position'   => $position,
+        'salary'     => $salary,
+    ]);
 
     $pdo->commit();
 } catch (Throwable $e) {

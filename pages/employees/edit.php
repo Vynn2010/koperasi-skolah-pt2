@@ -1,13 +1,12 @@
 <?php
+require_once __DIR__ . "/../../repositories/employees_repository.php";
 require_once __DIR__ . "/../../middleware/auth.php";
 requireLogin();
 require_once __DIR__ . "/../../config/database.php";
 
 $id = (int) ($_GET['id'] ?? 0);
 
-$stmt = $pdo->prepare("SELECT * FROM employees WHERE id = ?");
-$stmt->execute([$id]);
-$employee = $stmt->fetch(PDO::FETCH_ASSOC);
+$employee = findEmployee($id);
 
 if (!$employee) {
     $_SESSION['flash'] = ['type' => 'error', 'message' => "Data pegawai tidak ditemukan."];

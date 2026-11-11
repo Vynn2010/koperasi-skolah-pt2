@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../../repositories/employees_repository.php";
 require_once __DIR__ . "/../../middleware/auth.php";
 requireLogin();
 require_once __DIR__ . "/../../config/database.php";
@@ -6,7 +7,7 @@ require_once __DIR__ . "/../../config/database.php";
 $flash = $_SESSION['flash'] ?? null;
 unset($_SESSION['flash']);
 
-$employees = $pdo->query("SELECT * FROM employees ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+$employees = getAllEmployees();
 $genderLabel = ['M' => 'Laki-laki', 'F' => 'Perempuan'];
 
 ?>
