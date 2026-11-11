@@ -8,8 +8,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$categories = ['Food','Drink','Stationery','Uniform'];
-$units = ['Pcs','Pack','Bottle'];
+$categories = getProductCategories();
+$units = getProductUnits();
 
 $product_code = trim($_POST['product_code'] ?? '');
 $product_name = trim($_POST['product_name'] ?? '');
@@ -24,14 +24,10 @@ $errors = [];
 
 if ($product_code === '') {
     $errors['product_code'] = "Kode produk wajib diisi.";
-} elseif (strlen($product_code)>10){
+} elseif (strlen($product_code) > 10) {
     $errors['product_code'] = "Kode produk maksimal 10 karakter.";
-} else {
-    $stmt = $pdo->prepare("SELECT 1 FROM products WHERE product_code =?");
-    $stmt->execute([$product_code]);
-    if ($stmt->fetchColumn()) {
-        $errors['product_code'] = "Kode produk sudah digunakan.";
-    }
+} elseif (productCodeExists($product_code)) {
+    $errors['product_code'] = "Kode produk sudah digunakan.";
 }
 
 if ($product_name === ''){
@@ -92,16 +88,12 @@ if (!empty($errors)) {
 try {
     $pdo -> beginTransaction();
 
-    $stmt = $pdo->prepare(
-        "INSERT INTO products
-            (product_code, product_name, category, unit, price, stock, entry_date, description)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-    );
-    $stmt->execute([
-        $product_code, $product_name, $category, $unit,
-        $price, $stock, $entry_date, $description
+    insertProduct([
+    'product_code' => $product_code, 'product_name' => $product_name,
+    'category' => $category, 'unit' => $unit, 'price' => $price,
+    'stock' => $stock, 'entry_date' => $entry_date, 'description' => $description,
     ]);
-
+    
     $pdo->commit();
 } catch (Throwable $errors) {
     if ($pdo->inTransaction()) {

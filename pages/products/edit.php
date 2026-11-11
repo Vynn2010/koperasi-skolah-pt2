@@ -1,13 +1,12 @@
 <?php
+require_once __DIR__ . "/../../repositories/products_repository.php";
 require_once __DIR__ . "/../../middleware/auth.php";
 requireLogin();
 require_once __DIR__ . "/../../config/database.php";
 
 $id = (int) ($_GET['id'] ?? 0);
 
-$stmt = $pdo->prepare("SELECT * FROM products WHERE product_id = ?");
-$stmt->execute([$id]);
-$product = $stmt->fetch();
+$product = findProduct($id);
 
 if ($id <= 0 || !$product) {
     $_SESSION['flash'] = ['type' => 'error', 'message' => "Data produk tidak ditemukan."];
@@ -24,8 +23,8 @@ if (isset($_SESSION['form'])) {
     unset($_SESSION['form']);
 }
 
-$categories = ['Food', 'Drink', 'Stationery', 'Uniform'];
-$units = ['Pcs', 'Pack', 'Bottle'];
+$categories = getProductCategories();
+$units = getProductUnits();
 ?>
 
 <!DOCTYPE html>

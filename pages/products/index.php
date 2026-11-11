@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../../repositories/products_repository.php";
 require_once __DIR__ . "/../../middleware/auth.php";
 requireLogin();
 require_once __DIR__ . "/../../config/database.php";
@@ -6,7 +7,7 @@ require_once __DIR__ . "/../../config/database.php";
 $flash = $_SESSION['flash'] ?? null;
 unset($_SESSION['flash']);
 
-$products = $pdo->query("SELECT * FROM products ORDER BY product_id DESC")->fetchAll();
+$products = getAllProducts();
 ?>
 
 <!DOCTYPE html>

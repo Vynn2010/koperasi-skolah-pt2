@@ -12,9 +12,9 @@ $id = (int)($_POST['id'] ?? 0);
 
 $stmt = $pdo->prepare("SELECT 1 FROM products WHERE product_id = ?");
 $stmt->execute([$id]);
-if ($id <= 0 || !$stmt->fetchColumn()) {
-    $_SESSION['flash'] = ['type' => 'error','message' => "Data produk tidak ditemukan."];
-    header("Location: ../../pages/product/index.php");
+if ($id <= 0 || !findProduct($id)) {
+    $_SESSION['flash'] = ['type' => 'error', 'message' => "Data produk tidak ditemukan."];
+    header("Location: ../../pages/products/index.php");   // <-- perbaiki typo, lihat di bawah
     exit;
 }
 
@@ -102,20 +102,14 @@ if (!empty($errors)) {
 try {
     $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare("SELECT product_id FROM products WHERE product_id = ? FOR UPDATE");
-    $stmt->execute([$id]);
-    if (!$stmt->fetchColumn()) {
-        throw new RuntimeException("Data tidak ditemukan.");
+    if (!lockProduct($id)) {
+    throw new RuntimeException("Data tidak ditemukan.");
     }
 
-    $stmt = $pdo->prepare(
-        "UPDATE products SET product_code = ?, product_name = ?, category = ?, unit  = ?,
-        price = ?, stock = ?, entry_date = ?, description = ? WHERE product_id = ?"
-    );
-
-    $stmt->execute([
-        $product_code,$product_name,$category,$unit,
-        $price, $stock, $entry_date, $description, $id
+    updateProduct($id, [
+        'product_code' => $product_code, 'product_name' => $product_name,
+        'category' => $category, 'unit' => $unit, 'price' => $price,
+        'stock' => $stock, 'entry_date' => $entry_date, 'description' => $description,
     ]);
 
     $pdo->commit();

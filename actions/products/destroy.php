@@ -13,14 +13,11 @@ $id = (int)($_POST['id'] ?? 0);
 try {
     $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare("SELECT product_id FROM products WHERE product_id = ? FOR UPDATE");
-    $stmt->execute([$id]);
-    if ($id <= 0 || !$stmt->fetchColumn()) {
-        throw new RuntimeException("Data tidak ditemukan.");
+    if ($id <= 0 || !lockProduct($id)) {
+    throw new RuntimeException("Data tidak ditemukan.");
     }
 
-    $stmt = $pdo->prepare("DELETE FROM products WHERE product_id = ?");
-    $stmt->execute([$id]);
+    deleteProduct($id); 
 
     $pdo->commit();
     $_SESSION['flash'] = ['type' => 'success','message' => "Produk berhasil dihapus."];
