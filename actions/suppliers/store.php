@@ -77,11 +77,14 @@ $product_types = json_encode($types);
 try {
     $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare(
-        "INSERT INTO suppliers (name, email, phone, address, product_types, partnership_date)
-         VALUES (?, ?, ?, ?, ?, ?)"
-    );
-    $stmt->execute([$name, $email, $phone, $address, $product_types, $partnership_date]);
+    insertSupplier([
+    'name'             => $name,
+    'email'            => $email,
+    'phone'            => $phone,
+    'address'          => $address,
+    'product_types'    => $product_types,
+    'partnership_date' => $partnership_date,
+    ]);
 
     $pdo->commit();
 } catch (Throwable $e) {

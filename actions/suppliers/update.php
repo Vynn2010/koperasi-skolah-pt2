@@ -12,13 +12,13 @@ $id = (int)($_POST['id'] ?? 0);
 
 $stmt = $pdo->prepare("SELECT 1 FROM suppliers WHERE id = ?");
 $stmt->execute([$id]);
-if ($id <= 0 || !$stmt->fetchColumn()) {
+if ($id <= 0 || !findSupplier($id)) {
     $_SESSION['flash'] = ['type' => 'error', 'message' => "Data supplier tidak ditemukan."];
     header("Location: ../../pages/suppliers/index.php");
     exit;
 }
 
-$type_list = ['Food', 'Drink', 'Stationery', 'Uniform'];
+$type_list = getSupplierTypes();
 
 $supplier_name    = trim($_POST['supplier_name'] ?? '');
 $email            = trim($_POST['email'] ?? '');
@@ -87,18 +87,18 @@ $product_types = json_encode($types);
 try {
     $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare("SELECT id FROM suppliers WHERE id = ? FOR UPDATE");
-    $stmt->execute([$id]);
-    if (!$stmt->fetchColumn()) {
-        throw new RuntimeException("Data tidak ditemukan.");
+    if (!lockSupplier($id)) {
+    throw new RuntimeException("Data tidak ditemukan.");
     }
 
-    $stmt = $pdo->prepare(
-        "UPDATE suppliers SET name = ?, email = ?, phone = ?, address = ?,
-                product_types = ?, partnership_date = ?
-        WHERE id = ?"
-    );
-    $stmt->execute([$supplier_name, $email, $phone, $address, $product_types, $partnership_date, $id]);
+    updateSupplier($id, [
+        'name'             => $supplier_name,
+        'email'            => $email,
+        'phone'            => $phone,
+        'address'          => $address,
+        'product_types'    => $product_types,
+        'partnership_date' => $partnership_date,
+    ]);
 
     $pdo->commit();
 } catch (Throwable $e) {

@@ -5,9 +5,7 @@ require_once __DIR__ . "/../../config/database.php";
 
 $id = (int) ($_GET['id'] ?? 0);
 
-$stmt = $pdo->prepare("SELECT * FROM suppliers WHERE id = ?");
-$stmt->execute([$id]);
-$supplier = $stmt->fetch(PDO::FETCH_ASSOC);
+$supplier = findSupplier($id);
 
 if ($id <= 0 || !$supplier) {
     $_SESSION['flash'] = ['type' => 'error', 'message' => "Data supplier tidak ditemukan."];
@@ -15,7 +13,7 @@ if ($id <= 0 || !$supplier) {
     exit;
 }
 
-$type_list = ['Food', 'Drink', 'Stationery', 'Uniform'];
+$type_list = getSupplierTypes();
 
 // data lama dari database
 $old = $supplier;

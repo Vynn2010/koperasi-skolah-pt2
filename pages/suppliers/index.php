@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../../repositories/suppliers_repository.php";
 require_once __DIR__ . "/../../middleware/auth.php";
 requireLogin();
 require_once __DIR__ . "/../../config/database.php";
@@ -6,7 +7,7 @@ require_once __DIR__ . "/../../config/database.php";
 $flash = $_SESSION['flash'] ?? null;
 unset($_SESSION['flash']);
 
-$suppliers = $pdo->query("SELECT * FROM suppliers ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+$suppliers = getAllSuppliers();
 
 ?>
 <!DOCTYPE html>
